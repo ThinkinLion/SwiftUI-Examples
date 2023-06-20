@@ -22,6 +22,7 @@ struct DynamicIsland: View {
      */
     
     var body: some View {
+        let isHavingNotch = safeArea.bottom != 0
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 12) {
                 Image("pic2")
@@ -38,6 +39,7 @@ struct DynamicIsland: View {
                     })
                     .padding(.top, safeArea.top + 15) ///offset이 0부터 시작하도록 offset extractor앞에 패딩 적용
                     .offsetExtractor(coordinateSpace: "SCROLLVIEW") { scrollRect in
+                        guard isHavingNotch else { return }
                         //convert our offset into progress(0-1)
                         let progress = -scrollRect.minY / 25
                         scrollProgress = min(max(progress, 0), 1)
@@ -60,7 +62,7 @@ struct DynamicIsland: View {
 //                    .onAppear {
 //                        temp = proxy.size
 //                    }
-                if let anchor = pref["Header"] {
+                if let anchor = pref["Header"], isHavingNotch {
                     let frameRect = proxy[anchor]
                     let isHavingDynamicIsland = safeArea.top > 51
                     let capsuleHeight = isHavingDynamicIsland ? 37 : (safeArea.top - 15)
