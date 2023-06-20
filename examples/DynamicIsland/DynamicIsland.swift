@@ -13,6 +13,14 @@ struct DynamicIsland: View {
     @State private var scrollProgress: CGFloat = 0
     @State private var temp: CGSize = .zero
     @Environment(\.colorScheme) private var colorScheme
+    
+    /*
+     safearea.top
+     dynamic island iphonses: 50
+     notch iphones: 45~47
+     notch-less iphones: 0
+     */
+    
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 12) {
@@ -54,6 +62,9 @@ struct DynamicIsland: View {
 //                    }
                 if let anchor = pref["Header"] {
                     let frameRect = proxy[anchor]
+                    let isHavingDynamicIsland = safeArea.top > 51
+                    let capsuleHeight = isHavingDynamicIsland ? 37 : (safeArea.top - 15)
+                    
                     Canvas { out, size in
                         out.addFilter(.alphaThreshold(min: 0.5))
                         out.addFilter(.blur(radius: 12))
@@ -64,7 +75,7 @@ struct DynamicIsland: View {
                             
                             if let dynamicIsland = out.resolveSymbol(id: 1) {
                                 ///placing dynamic island
-                                let rect = CGRect(x: (size.width - 120) / 2, y: 11, width: 120, height: 37)
+                                let rect = CGRect(x: (size.width - 120) / 2, y: isHavingDynamicIsland ? 11 : 0, width: 120, height: capsuleHeight)
                                 context.draw(dynamicIsland, in: rect)
                             }
                         }
@@ -72,7 +83,7 @@ struct DynamicIsland: View {
                         headerView(frameRect)
                             .tag(0)
                             .id(0)
-                        dynamicIslandCapsule()
+                        dynamicIslandCapsule(capsuleHeight)
                             .tag(1)
                             .id(1)
                     }
@@ -100,7 +111,7 @@ struct DynamicIsland: View {
     @ViewBuilder
     func dynamicIslandCapsule(_ height: CGFloat = 37) -> some View {
         Capsule()
-            .fill(.red)
+//            .fill(.red)
             .frame(width: 120, height: height)
     }
     
