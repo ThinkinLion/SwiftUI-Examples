@@ -11,7 +11,7 @@ import SwiftUI
 struct examplesApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView_DynamicIsland()
         }
     }
 }
