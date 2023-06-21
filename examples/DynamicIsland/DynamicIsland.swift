@@ -46,7 +46,7 @@ struct DynamicIsland: View {
                         scrollProgress = min(max(progress, 0), 1)
                     }
                 
-                let fixedTop: CGFloat = safeArea.top
+                let fixedTop: CGFloat = safeArea.top + 3 //스티키시 3만큼 horizontal align 조절
                 Text("moldong:\(scrollProgress), \(temp.height)")
                     .font(.caption)
                     .foregroundColor(.gray)
