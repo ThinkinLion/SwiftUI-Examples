@@ -12,6 +12,7 @@ struct DynamicIsland: View {
     var safeArea: EdgeInsets
     @State private var scrollProgress: CGFloat = 0
     @State private var temp: CGSize = .zero
+    @State private var textHeaderOffset: CGFloat = 0
     @Environment(\.colorScheme) private var colorScheme
     
     /*
@@ -45,10 +46,24 @@ struct DynamicIsland: View {
                         scrollProgress = min(max(progress, 0), 1)
                     }
                 
+                let fixedTop: CGFloat = safeArea.top
                 Text("moldong:\(scrollProgress), \(temp.height)")
                     .font(.caption)
                     .foregroundColor(.gray)
                     .padding(.vertical, 15)
+                    .background {
+                        Rectangle()
+                            .fill(colorScheme == .dark ? .black : .white)
+                            .frame(width: size.width)
+                            .padding(.top, textHeaderOffset < fixedTop ? -safeArea.top : 0)
+                            .shadow(color: .black.opacity(textHeaderOffset < fixedTop ? 0.1 : 0), radius: 5, x: 0, y: 5)
+                    }
+                    ///stopping at the top
+                    .offset(y: textHeaderOffset < fixedTop ? -(textHeaderOffset - fixedTop) : 0)
+                    .offsetExtractor(coordinateSpace: "SCROLLVIEW") {
+                        textHeaderOffset = $0.minY
+                    }
+                    .zIndex(1000)
                 
                 sampleRows()
             }
@@ -96,6 +111,25 @@ struct DynamicIsland: View {
                     .fill(colorScheme == .dark ? .black : .white)
                     .frame(height: 15)
             }
+        })
+        .overlay(alignment: .top, content: {
+            HStack {
+                Button {
+                    
+                } label: {
+                    Label("Back", systemImage: "chevron.left")
+                }
+                
+                Spacer()
+                
+                Button {
+                    
+                } label: {
+                    Text("Edit")
+                }
+            }
+            .padding(15)
+            .padding(.top, safeArea.top)
         })
         .coordinateSpace(name: "SCROLLVIEW")
 //        .background(Color.black)
